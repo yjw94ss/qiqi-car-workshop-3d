@@ -1,0 +1,2010 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>奇奇的超级汽车改装工坊 - 3D质感儿童改装与特技兜风</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+    body {
+      font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      background: radial-gradient(circle at 50% 0%, #1E293B 0%, #0F172A 100%);
+      color: #F8FAFC;
+    }
+    .toy-btn {
+      transition: transform 0.14s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.14s ease, filter 0.14s ease;
+      box-shadow: 0 5px 0 rgba(0,0,0,0.35), inset 0 2px 0 rgba(255,255,255,0.35);
+    }
+    .toy-btn:hover {
+      filter: brightness(1.06);
+    }
+    .toy-btn:active {
+      transform: translateY(4px) scale(0.96);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.35);
+    }
+    .toy-card {
+      background: linear-gradient(180deg, #334155 0%, #1E293B 100%);
+      border: 2px solid #475569;
+      box-shadow: 0 5px 0 #0F172A, inset 0 1px 0 rgba(255,255,255,0.15);
+      transition: all 0.16s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .toy-card:hover {
+      border-color: #38BDF8;
+      transform: translateY(-2px);
+    }
+    .toy-card-active {
+      background: linear-gradient(180deg, #FEF08A 0%, #F59E0B 100%) !important;
+      border: 3px solid #FFFFFF !important;
+      color: #0F172A !important;
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 7px 0 #B45309, 0 0 18px rgba(245, 158, 11, 0.55) !important;
+    }
+    .toy-card-active .card-label {
+      color: #0F172A !important;
+    }
+    .tab-active {
+      background: linear-gradient(180deg, #FB923C 0%, #EA580C 100%) !important;
+      color: #FFFFFF !important;
+      border-color: #FED7AA !important;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 0 #9A3412, 0 0 14px rgba(249, 115, 22, 0.45) !important;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+  <!-- Top Header Bar -->
+  <header class="w-full bg-slate-900/95 backdrop-blur border-b-2 border-slate-700 px-3 py-2 flex flex-wrap items-center justify-between gap-2 z-20">
+    <div class="flex items-center gap-2.5">
+      <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center shadow-lg border-2 border-orange-200">
+        <svg class="w-7 h-7 text-white" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11h1a2 2 0 0 1 2 2v4a1 1 0 0 1-1 1h-1a3 3 0 0 1-6 0h-4a3 3 0 0 1-6 0H3a1 1 0 0 1-1-1v-4a2 2 0 0 1 2-2h1zm2.1-4L6 10.5h12L16.9 7H7.1zM7 15.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm10 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-base sm:text-xl font-black bg-gradient-to-r from-amber-300 via-orange-400 to-rose-400 bg-clip-text text-transparent tracking-wide leading-tight">
+          旋风机械改装车库 · TURBO KIDS
+        </h1>
+        <p class="text-xs font-bold text-slate-400">真实悬挂避震 · 液压升降台 · 特技飞坡赛道</p>
+      </div>
+    </div>
+
+    <!-- Star Counter & Controls -->
+    <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1.5 bg-slate-800 border-2 border-amber-400/80 rounded-full px-3.5 py-1 shadow-inner" title="收集到的能量星">
+        <span class="text-lg">⭐</span>
+        <span id="starCountText" class="text-lg font-black text-amber-300">0</span>
+      </div>
+
+      <button id="btnModeToggle" class="toy-btn bg-gradient-to-b from-emerald-400 to-emerald-600 text-white font-black px-4 py-2 rounded-2xl text-sm sm:text-base flex items-center gap-1.5 border-2 border-emerald-200">
+        <span id="modeBtnIcon" class="text-lg">🏁</span>
+        <span id="modeBtnLabel">出发兜风！</span>
+      </button>
+
+      <button id="btnMute" class="toy-btn bg-slate-800 hover:bg-slate-700 text-sky-300 font-bold w-11 h-11 rounded-2xl flex items-center justify-center text-xl border-2 border-slate-600" aria-label="声音开关">
+        🔊
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Stage Container -->
+  <main class="flex-1 flex flex-col max-w-5xl w-full mx-auto p-2 sm:p-3.5 gap-3">
+
+    <!-- Interactive Canvas Stage -->
+    <div class="relative w-full bg-slate-950 rounded-3xl border-4 border-slate-700 shadow-2xl overflow-hidden flex-shrink-0" style="height: 360px;">
+      <canvas id="gameCanvas" class="w-full h-full block cursor-pointer"></canvas>
+
+      <!-- Floating Top-Left Toolbar -->
+      <div class="absolute top-3 left-3 flex flex-wrap gap-2 z-10">
+        <button id="btnSceneSwitch" class="toy-btn bg-slate-900/90 hover:bg-slate-800 text-white font-extrabold px-3 py-1.5 rounded-2xl text-xs sm:text-sm border-2 border-sky-400/70 flex items-center gap-1.5">
+          <span id="sceneIcon">🌳</span>
+          <span id="sceneName">阳光森林</span>
+        </button>
+        <button id="btnWashCar" class="toy-btn bg-gradient-to-b from-cyan-400 to-blue-600 text-white font-extrabold px-3 py-1.5 rounded-2xl text-xs sm:text-sm border-2 border-cyan-200 flex items-center gap-1">
+          <span>🫧</span>
+          <span>泡泡洗车</span>
+        </button>
+        <button id="btnRandomCar" class="toy-btn bg-gradient-to-b from-purple-500 to-indigo-600 text-white font-extrabold px-3 py-1.5 rounded-2xl text-xs sm:text-sm border-2 border-purple-300 flex items-center gap-1">
+          <span>🎲</span>
+          <span>惊喜变身</span>
+        </button>
+      </div>
+
+      <!-- Floating Top-Right Voice Status Pill -->
+      <div id="speechBubble" class="absolute top-3 right-3 bg-slate-900/90 border-2 border-amber-400 text-amber-200 font-extrabold px-3.5 py-1.5 rounded-2xl shadow-lg text-xs sm:text-sm flex items-center gap-2 transition-all duration-300 max-w-xs sm:max-w-sm">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0"></span>
+        <span id="speechText" class="truncate">点击下方零件，机械臂会帮你组装战车！</span>
+      </div>
+
+      <!-- Drive Mode On-Screen Big Action Buttons (Hidden in Garage Mode) -->
+      <div id="driveControls" class="hidden absolute bottom-3 inset-x-3 flex items-center justify-between gap-2 z-10 pointer-events-none">
+        <div class="flex gap-2 pointer-events-auto">
+          <button id="btnDriveBackGarage" class="toy-btn bg-gradient-to-b from-amber-400 to-amber-600 text-slate-950 font-black px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-2xl text-xs sm:text-sm border-2 border-amber-200 flex items-center gap-1.5">
+            <span class="text-lg">🔧</span>
+            <span>回车间改装</span>
+          </button>
+          <button id="btnDriveHorn" class="toy-btn bg-gradient-to-b from-pink-500 to-rose-600 text-white font-black px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-2xl text-xs sm:text-sm border-2 border-pink-300 flex items-center gap-1.5">
+            <span class="text-lg">📯</span>
+            <span>嘀嘀打招呼</span>
+          </button>
+        </div>
+
+        <div class="flex gap-2 pointer-events-auto">
+          <button id="btnDriveJump" class="toy-btn bg-gradient-to-b from-sky-400 to-blue-600 text-white font-black px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl text-sm sm:text-base border-2 border-sky-200 flex items-center gap-1.5">
+            <span class="text-xl">🦘</span>
+            <span>跳一跳</span>
+          </button>
+          <button id="btnDriveBoost" class="toy-btn bg-gradient-to-b from-orange-400 to-red-600 text-white font-black px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl text-sm sm:text-base border-2 border-orange-200 flex items-center gap-1.5">
+            <span class="text-xl">🚀</span>
+            <span>彩虹冲刺</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Garage Quick Controls on Canvas Bottom Right -->
+      <div id="garageFloatingActions" class="absolute bottom-3 right-3 flex gap-2 z-10">
+        <button id="btnLiftToggle" class="toy-btn bg-gradient-to-b from-slate-600 to-slate-800 text-amber-300 font-black px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm border-2 border-amber-400/70 flex items-center gap-1.5">
+          <span>🏗️</span>
+          <span>升降机</span>
+        </button>
+        <button id="btnGarageHorn" class="toy-btn bg-gradient-to-b from-rose-500 to-red-600 text-white font-black px-4 py-2.5 rounded-2xl text-xs sm:text-sm border-2 border-rose-300 flex items-center gap-1.5">
+          <span class="text-lg">📯</span>
+          <span>按喇叭</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Bottom Customization Workshop Panel (Visible in Garage Mode) -->
+    <section id="garagePanel" class="bg-slate-900/95 rounded-3xl border-2 border-slate-700 shadow-2xl p-3 sm:p-4 flex flex-col gap-3">
+      <!-- Category Tabs -->
+      <div class="grid grid-cols-5 gap-1.5 sm:gap-2.5">
+        <button data-tab="body" class="cat-tab toy-btn tab-active bg-slate-800 text-slate-200 font-black py-2 sm:py-2.5 px-2 rounded-2xl text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center gap-1.5 border-2 border-slate-600">
+          <span>🚙</span>
+          <span>车型</span>
+        </button>
+        <button data-tab="color" class="cat-tab toy-btn bg-slate-800 text-slate-200 font-black py-2 sm:py-2.5 px-2 rounded-2xl text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center gap-1.5 border-2 border-slate-600">
+          <span>🎨</span>
+          <span>颜色</span>
+        </button>
+        <button data-tab="wheel" class="cat-tab toy-btn bg-slate-800 text-slate-200 font-black py-2 sm:py-2.5 px-2 rounded-2xl text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center gap-1.5 border-2 border-slate-600">
+          <span>🛞</span>
+          <span>轮胎</span>
+        </button>
+        <button data-tab="topper" class="cat-tab toy-btn bg-slate-800 text-slate-200 font-black py-2 sm:py-2.5 px-2 rounded-2xl text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center gap-1.5 border-2 border-slate-600">
+          <span>🚀</span>
+          <span>车顶宝物</span>
+        </button>
+        <button data-tab="sticker" class="cat-tab toy-btn bg-slate-800 text-slate-200 font-black py-2 sm:py-2.5 px-2 rounded-2xl text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center gap-1.5 border-2 border-slate-600">
+          <span>🦖</span>
+          <span>贴纸与喇叭</span>
+        </button>
+      </div>
+
+      <!-- Options Grid rendered dynamically with SVG Blueprints -->
+      <div id="optionsContainer" class="grid grid-cols-3 sm:grid-cols-6 gap-2.5 pt-1"></div>
+    </section>
+
+    <!-- Bottom Fun Dashboard (Visible in Drive Mode) -->
+    <section id="drivePanel" class="hidden bg-slate-900/95 rounded-3xl border-2 border-emerald-500/60 shadow-2xl p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center text-2xl">
+          🏆
+        </div>
+        <div>
+          <div class="text-sm sm:text-base font-black text-white">特技飞坡与能量星收集</div>
+          <div class="text-xs text-slate-400 font-bold">冲上斜坡会自动腾空特技飞跃！点画面或按空格键随时跳跃！</div>
+        </div>
+      </div>
+
+      <div class="flex-1 min-w-[180px] max-w-md bg-slate-800 h-5 rounded-full overflow-hidden border-2 border-slate-600 p-0.5">
+        <div id="rainbowProgress" class="h-full rounded-full transition-all duration-300" style="width: 10%; background: linear-gradient(90deg, #EF4444, #F59E0B, #10B981, #3B82F6, #8B5CF6);"></div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-bold text-slate-400">挡位：</span>
+        <button data-speed="1" class="speed-btn toy-btn bg-emerald-600 text-white font-black px-3 py-1.5 rounded-xl text-xs border-2 border-emerald-300">🐢 慢悠悠</button>
+        <button data-speed="1.65" class="speed-btn toy-btn bg-amber-400 text-slate-950 font-black px-3 py-1.5 rounded-xl text-xs border-2 border-amber-200">🐇 快快跑</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // =====================================================
+    // 1. DETAILED PART DEFINITIONS WITH CUSTOM SVG PREVIEWS
+    // =====================================================
+    const CAR_BODIES = [
+      {
+        id: 'sport',
+        name: '幻影超跑 GT',
+        svg: `<svg viewBox="0 0 90 44" class="w-16 h-9"><path d="M8 32 L16 20 L36 12 L62 12 L78 21 L85 28 L84 34 L6 34 Z" fill="#EF4444" stroke="#FFF" stroke-width="2"/><path d="M35 15 L58 15 L70 21 L26 21 Z" fill="#38BDF8"/><circle cx="22" cy="34" r="8" fill="#1E293B" stroke="#E2E8F0" stroke-width="2"/><circle cx="68" cy="34" r="8" fill="#1E293B" stroke="#E2E8F0" stroke-width="2"/></svg>`
+      },
+      {
+        id: 'monster',
+        name: '狂野大脚怪',
+        svg: `<svg viewBox="0 0 90 48" class="w-16 h-9"><rect x="14" y="8" width="58" height="22" rx="5" fill="#F97316" stroke="#FFF" stroke-width="2"/><rect x="34" y="11" width="26" height="10" rx="2" fill="#38BDF8"/><circle cx="24" cy="35" r="11" fill="#0F172A" stroke="#FACC15" stroke-width="2.5"/><circle cx="66" cy="35" r="11" fill="#0F172A" stroke="#FACC15" stroke-width="2.5"/></svg>`
+      },
+      {
+        id: 'firetruck',
+        name: '烈焰消防车',
+        svg: `<svg viewBox="0 0 90 46" class="w-16 h-9"><rect x="10" y="10" width="68" height="24" rx="4" fill="#DC2626" stroke="#FFF" stroke-width="2"/><rect x="12" y="4" width="46" height="5" fill="#FACC15"/><rect x="56" y="13" width="18" height="10" rx="2" fill="#7DD3FC"/><circle cx="24" cy="36" r="8" fill="#1E293B" stroke="#E2E8F0" stroke-width="2"/><circle cx="64" cy="36" r="8" fill="#1E293B" stroke="#E2E8F0" stroke-width="2"/></svg>`
+      },
+      {
+        id: 'icecream',
+        name: '复古甜品巴士',
+        svg: `<svg viewBox="0 0 90 46" class="w-16 h-9"><rect x="12" y="8" width="66" height="26" rx="10" fill="#EC4899" stroke="#FFF" stroke-width="2"/><path d="M14 23 H76 V32 H14 Z" fill="#FEF3C7"/><rect x="28" y="12" width="42" height="9" rx="3" fill="#BAE6FD"/><circle cx="25" cy="36" r="8" fill="#1E293B" stroke="#E2E8F0" stroke-width="2"/><circle cx="65" cy="36" r="8" fill="#1E293B" stroke="#E2E8F0" stroke-width="2"/></svg>`
+      },
+      {
+        id: 'dino',
+        name: '装甲霸王龙',
+        svg: `<svg viewBox="0 0 90 46" class="w-16 h-9"><polygon points="16,14 24,5 30,14 38,5 44,14 52,5 58,14" fill="#FACC15"/><path d="M12 32 L18 14 L66 14 L82 24 L76 34 L12 34 Z" fill="#16A34A" stroke="#FFF" stroke-width="2"/><circle cx="24" cy="35" r="9" fill="#1E293B" stroke="#A3E635" stroke-width="2"/><circle cx="66" cy="35" r="9" fill="#1E293B" stroke="#A3E635" stroke-width="2"/></svg>`
+      },
+      {
+        id: 'ufo',
+        name: '星际漫游车',
+        svg: `<svg viewBox="0 0 90 46" class="w-16 h-9"><path d="M24 24 A22 16 0 0 1 66 24 Z" fill="#38BDF8" stroke="#FFF" stroke-width="2"/><ellipse cx="45" cy="26" rx="36" ry="9" fill="#8B5CF6" stroke="#FFF" stroke-width="2"/><circle cx="25" cy="35" r="8" fill="#0F172A" stroke="#38BDF8" stroke-width="2"/><circle cx="65" cy="35" r="8" fill="#0F172A" stroke="#38BDF8" stroke-width="2"/></svg>`
+      }
+    ];
+
+    const CAR_COLORS = [
+      { id: 'red', name: '烈焰金属红', top: '#FF4D4D', bottom: '#991B1B', accent: '#FEF08A' },
+      { id: 'yellow', name: '大黄蜂赛车黄', top: '#FDE047', bottom: '#CA8A04', accent: '#1E293B' },
+      { id: 'blue', name: '氮气电光蓝', top: '#38BDF8', bottom: '#1D4ED8', accent: '#E0F2FE' },
+      { id: 'green', name: '机甲翡翠绿', top: '#4ADE80', bottom: '#15803D', accent: '#FEF08A' },
+      { id: 'pink', name: '霓虹糖果粉', top: '#F472B6', bottom: '#BE185D', accent: '#FCE7F3' },
+      { id: 'purple', name: '暗夜幻影紫', top: '#C084FC', bottom: '#581C87', accent: '#38BDF8' }
+    ];
+
+    const CAR_WHEELS = [
+      {
+        id: 'normal',
+        name: '竞技合金轮',
+        scale: 1.0,
+        svg: `<svg viewBox="0 0 44 44" class="w-10 h-10"><circle cx="22" cy="22" r="19" fill="#1E293B" stroke="#475569" stroke-width="3"/><circle cx="22" cy="22" r="12" fill="none" stroke="#E2E8F0" stroke-width="2.5"/><path d="M22 10 V34 M10 22 H34 M14 14 L30 30 M30 14 L14 30" stroke="#CBD5E1" stroke-width="2.5"/><circle cx="22" cy="22" r="4" fill="#EF4444"/></svg>`
+      },
+      {
+        id: 'monster',
+        name: '深齿越野胎',
+        scale: 1.32,
+        svg: `<svg viewBox="0 0 44 44" class="w-10 h-10"><circle cx="22" cy="22" r="18" fill="#0F172A" stroke="#334155" stroke-width="4" stroke-dasharray="5 3"/><circle cx="22" cy="22" r="10" fill="#F59E0B" stroke="#FFF" stroke-width="2"/><circle cx="22" cy="22" r="4" fill="#1E293B"/></svg>`
+      },
+      {
+        id: 'donut',
+        name: '糖霜甜甜圈',
+        scale: 1.1,
+        svg: `<svg viewBox="0 0 44 44" class="w-10 h-10"><circle cx="22" cy="22" r="19" fill="#D97706"/><circle cx="22" cy="22" r="14" fill="#EC4899"/><circle cx="17" cy="14" r="1.8" fill="#FEF08A"/><circle cx="27" cy="16" r="1.8" fill="#38BDF8"/><circle cx="16" cy="27" r="1.8" fill="#4ADE80"/><circle cx="22" cy="22" r="6" fill="#1E293B"/></svg>`
+      },
+      {
+        id: 'rainbow',
+        name: '霓虹风火轮',
+        scale: 1.14,
+        svg: `<svg viewBox="0 0 44 44" class="w-10 h-10"><circle cx="22" cy="22" r="19" fill="#0F172A" stroke="#38BDF8" stroke-width="2.5"/><circle cx="22" cy="22" r="14" fill="none" stroke="#EC4899" stroke-width="2.5"/><circle cx="22" cy="22" r="9" fill="none" stroke="#FACC15" stroke-width="2.5"/><circle cx="22" cy="22" r="4" fill="#4ADE80"/></svg>`
+      },
+      {
+        id: 'star',
+        name: '黄金五角星轮',
+        scale: 1.1,
+        svg: `<svg viewBox="0 0 44 44" class="w-10 h-10"><circle cx="22" cy="22" r="19" fill="#1E293B" stroke="#F8FAFC" stroke-width="2"/><polygon points="22,8 25.5,17 35,17 27.5,23 30,32 22,26.5 14,32 16.5,23 9,17 18.5,17" fill="#FACC15"/></svg>`
+      },
+      {
+        id: 'flower',
+        name: '重装齿轮胎',
+        scale: 1.15,
+        svg: `<svg viewBox="0 0 44 44" class="w-10 h-10"><circle cx="22" cy="22" r="18" fill="#334155" stroke="#F59E0B" stroke-width="4" stroke-dasharray="4 3"/><circle cx="22" cy="22" r="11" fill="#FBBF24"/><circle cx="22" cy="22" r="5" fill="#1E293B"/></svg>`
+      }
+    ];
+
+    const CAR_TOPPERS = [
+      {
+        id: 'rocket',
+        name: '双联氮气喷射',
+        svg: `<svg viewBox="0 0 60 40" class="w-12 h-9"><rect x="10" y="10" width="28" height="16" rx="6" fill="#CBD5E1" stroke="#475569" stroke-width="2"/><polygon points="6,12 10,10 10,26 6,24" fill="#EF4444"/><path d="M38 12 L56 8 L48 18 L58 26 L38 24 Z" fill="#F97316"/><path d="M38 15 L49 13 L45 18 L50 22 L38 21 Z" fill="#FEF08A"/></svg>`
+      },
+      {
+        id: 'siren',
+        name: '红蓝频闪警灯',
+        svg: `<svg viewBox="0 0 60 40" class="w-12 h-9"><rect x="12" y="24" width="36" height="6" rx="2" fill="#94A3B8"/><path d="M15 24 L18 12 H29 V24 Z" fill="#EF4444"/><path d="M31 24 V12 H42 L45 24 Z" fill="#3B82F6"/><line x1="30" y1="4" x2="30" y2="9" stroke="#FEF08A" stroke-width="3"/></svg>`
+      },
+      {
+        id: 'propeller',
+        name: '碳纤直升旋翼',
+        svg: `<svg viewBox="0 0 60 40" class="w-12 h-9"><rect x="27" y="14" width="6" height="18" fill="#94A3B8"/><ellipse cx="30" cy="12" rx="24" ry="4" fill="#F59E0B" stroke="#FFF" stroke-width="1.5"/><circle cx="30" cy="12" r="4" fill="#EF4444"/></svg>`
+      },
+      {
+        id: 'crown',
+        name: '冠军黄金皇冠',
+        svg: `<svg viewBox="0 0 60 40" class="w-12 h-9"><polygon points="12,30 16,10 25,20 30,8 35,20 44,10 48,30" fill="#FACC15" stroke="#FEF08A" stroke-width="2"/><circle cx="30" cy="24" r="3" fill="#EF4444"/><circle cx="21" cy="25" r="2.5" fill="#3B82F6"/><circle cx="39" cy="25" r="2.5" fill="#10B981"/></svg>`
+      },
+      {
+        id: 'cone',
+        name: '巨型能量电磁炮',
+        svg: `<svg viewBox="0 0 60 40" class="w-12 h-9"><rect x="12" y="12" width="30" height="14" rx="4" fill="#6366F1" stroke="#FFF" stroke-width="2"/><circle cx="46" cy="19" r="7" fill="#38BDF8"/><circle cx="46" cy="19" r="3" fill="#FFF"/></svg>`
+      },
+      {
+        id: 'wing',
+        name: '碳纤GT大尾翼',
+        svg: `<svg viewBox="0 0 60 40" class="w-12 h-9"><path d="M10 12 H50 L44 18 H16 Z" fill="#EF4444" stroke="#FFF" stroke-width="1.5"/><path d="M20 18 L16 32 H22 L26 18 Z M38 18 L34 32 H40 L44 18 Z" fill="#475569"/></svg>`
+      }
+    ];
+
+    const CAR_STICKERS = [
+      { id: 'star', name: '冠军赛车条纹', badge: '77', pattern: 'stripe', hornType: 'melody', hornLabel: '冠军交响喇叭' },
+      { id: 'dino', name: '烈火战车涂装', badge: '🔥', pattern: 'flame', hornType: 'roar', hornLabel: '怪兽咆哮喇叭' },
+      { id: 'bolt', name: '雷霆闪电涂装', badge: '⚡', pattern: 'bolt', hornType: 'beep', hornLabel: '超跑双音喇叭' },
+      { id: 'heart', name: '萌宠冲锋队', badge: '🐾', pattern: 'dots', hornType: 'duck', hornLabel: '萌趣鸭鸭喇叭' },
+      { id: 'space', name: '星际机甲矩阵', badge: '🚀', pattern: 'cyber', hornType: 'laser', hornLabel: '脉冲激光喇叭' },
+      { id: 'paw', name: '紧急救援队徽', badge: '911', pattern: 'rescue', hornType: 'siren', hornLabel: '消防警报喇叭' }
+    ];
+
+    const SCENES = [
+      { id: 'forest', name: '阳光森林', icon: '🌳', skyTop: '#0284C7', skyBottom: '#BAE6FD', hillFar: '#16A34A', hillNear: '#15803D', roadTop: '#475569', roadBottom: '#1E293B' },
+      { id: 'beach', name: '彩虹海滩', icon: '🏖️', skyTop: '#0369A1', skyBottom: '#FEF08A', hillFar: '#F59E0B', hillNear: '#D97706', roadTop: '#64748B', roadBottom: '#334155' },
+      { id: 'night', name: '奇幻星空', icon: '🌙', skyTop: '#090D16', skyBottom: '#1E1B4B', hillFar: '#312E81', hillNear: '#1E1B4B', roadTop: '#334155', roadBottom: '#0F172A' }
+    ];
+
+    // =====================================================
+    // 2. GAME & PHYSICS STATE
+    // =====================================================
+    const state = {
+      mode: 'garage', // 'garage' | 'drive'
+      activeTab: 'body',
+      muted: false,
+      stars: 0,
+      sceneIndex: 0,
+      car: {
+        body: 'sport',
+        color: 'red',
+        wheel: 'normal',
+        topper: 'rocket',
+        sticker: 'bolt'
+      },
+      // Garage Hydraulic Lift & Robot Arm State
+      liftHeight: 18,
+      liftTarget: 18,
+      robotArmProgress: 0, // 0 = idle, >0 = swooping down to install part
+      robotSparks: [],
+
+      // Real Suspension & Stunt Physics
+      wheelAngle: 0,
+      propellerAngle: 0,
+      chassisY: 0,
+      chassisVy: 0,
+      chassisPitch: 0,
+      chassisPitchV: 0,
+      frontWheelCompression: 0,
+      rearWheelCompression: 0,
+      isJumping: false,
+      boostTimer: 0,
+      hornWaveTimer: 0,
+      washTimer: 0,
+      speedMultiplier: 1.35,
+      roadOffset: 0,
+
+      // World Entities
+      particles: [],
+      exhaustSmoke: [],
+      bubbles: [],
+      collectibles: [],
+      ramps: [
+        { x: 750, width: 140, height: 42 },
+        { x: 1450, width: 150, height: 46 }
+      ],
+      roadsideProps: [
+        { x: 400, type: 'arch' },
+        { x: 880, type: 'sign' },
+        { x: 1280, type: 'tree' }
+      ],
+      clouds: [
+        { x: 120, y: 52, scale: 1.0, speed: 0.28 },
+        { x: 420, y: 38, scale: 0.78, speed: 0.2 },
+        { x: 740, y: 60, scale: 1.15, speed: 0.34 }
+      ]
+    };
+
+    try {
+      const saved = localStorage.getItem('kiki_car_workshop_v2');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.car) Object.assign(state.car, parsed.car);
+        if (typeof parsed.stars === 'number') state.stars = parsed.stars;
+      }
+    } catch (e) {}
+
+    function saveState() {
+      try {
+        localStorage.setItem('kiki_car_workshop_v2', JSON.stringify({
+          car: state.car,
+          stars: state.stars
+        }));
+      } catch (e) {}
+    }
+
+    // =====================================================
+    // 3. SYNTHESIZED SOUND & VOICE ENGINE
+    // =====================================================
+    let audioCtx = null;
+    function getAudioCtx() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) audioCtx = new AudioContextClass();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function speakText(text) {
+      const speechEl = document.getElementById('speechText');
+      if (speechEl) speechEl.textContent = text;
+
+      if (state.muted) return;
+      try {
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const utter = new SpeechSynthesisUtterance(text);
+          utter.lang = 'zh-CN';
+          utter.rate = 1.06;
+          utter.pitch = 1.15;
+          window.speechSynthesis.speak(utter);
+        }
+      } catch (e) {}
+    }
+
+    function playSound(type) {
+      if (state.muted) return;
+      const ctx = getAudioCtx();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+
+      if (type === 'pop') {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(340, now);
+        osc.frequency.exponentialRampToValueAtTime(760, now + 0.1);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.11);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.11);
+      } else if (type === 'drill') {
+        // Pneumatic impact wrench sound + chime!
+        for (let i = 0; i < 3; i++) {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(180 + i * 90, now + i * 0.055);
+          osc.frequency.exponentialRampToValueAtTime(520 + i * 120, now + i * 0.055 + 0.05);
+          gain.gain.setValueAtTime(0.16, now + i * 0.055);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.055 + 0.055);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + i * 0.055);
+          osc.stop(now + i * 0.055 + 0.055);
+        }
+      } else if (type === 'star') {
+        const notes = [587.33, 880, 1174.66];
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.05);
+          gain.gain.setValueAtTime(0.2, now + idx * 0.05);
+          gain.gain.exponentialRampToValueAtTime(0.008, now + idx * 0.05 + 0.18);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + idx * 0.05);
+          osc.stop(now + idx * 0.05 + 0.18);
+        });
+      } else if (type === 'jump') {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(190, now);
+        osc.frequency.exponentialRampToValueAtTime(620, now + 0.24);
+        gain.gain.setValueAtTime(0.24, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.25);
+      } else if (type === 'boost') {
+        // Deep turbo roar
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(110, now);
+        osc.frequency.exponentialRampToValueAtTime(420, now + 0.38);
+        gain.gain.setValueAtTime(0.22, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.4);
+      } else if (type === 'horn') {
+        const stickerObj = CAR_STICKERS.find(s => s.id === state.car.sticker) || CAR_STICKERS[0];
+        const hType = stickerObj.hornType;
+        if (hType === 'duck') {
+          [0, 0.15].forEach(offset => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(440, now + offset);
+            osc.frequency.linearRampToValueAtTime(310, now + offset + 0.1);
+            gain.gain.setValueAtTime(0.2, now + offset);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + offset + 0.11);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + offset);
+            osc.stop(now + offset + 0.11);
+          });
+        } else if (hType === 'siren') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(580, now);
+          osc.frequency.linearRampToValueAtTime(920, now + 0.2);
+          osc.frequency.linearRampToValueAtTime(580, now + 0.4);
+          gain.gain.setValueAtTime(0.22, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.42);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.42);
+        } else if (hType === 'roar') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(190, now);
+          osc.frequency.exponentialRampToValueAtTime(85, now + 0.36);
+          gain.gain.setValueAtTime(0.26, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.38);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.38);
+        } else if (hType === 'laser') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(1020, now);
+          osc.frequency.exponentialRampToValueAtTime(220, now + 0.22);
+          gain.gain.setValueAtTime(0.22, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.24);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.24);
+        } else {
+          // Dual-tone sports car horn / melody
+          const melody = [523.25, 659.25, 783.99, 1046.5];
+          melody.forEach((f, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(f, now + i * 0.075);
+            gain.gain.setValueAtTime(0.2, now + i * 0.075);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.075 + 0.12);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + i * 0.075);
+            osc.stop(now + i * 0.075 + 0.12);
+          });
+        }
+      }
+    }
+
+    // =====================================================
+    // 4. UI RENDERING & INTERACTIONS
+    // =====================================================
+    const optionsContainer = document.getElementById('optionsContainer');
+    const starCountText = document.getElementById('starCountText');
+    const rainbowProgress = document.getElementById('rainbowProgress');
+
+    function updateStarUI() {
+      starCountText.textContent = state.stars;
+      const pct = Math.max(10, (state.stars % 10) * 10);
+      rainbowProgress.style.width = pct + '%';
+    }
+
+    function triggerSuspensionBounce(impulse = -7.5) {
+      state.chassisVy = impulse;
+      state.frontWheelCompression = 8;
+      state.rearWheelCompression = 8;
+    }
+
+    function triggerRobotArmInstall() {
+      state.robotArmProgress = 1.0;
+      const canvas = document.getElementById('gameCanvas');
+      const cx = canvas.width * 0.5;
+      const cy = canvas.height * 0.52;
+      const sparkColors = ['#FEF08A', '#38BDF8', '#F97316', '#4ADE80'];
+      for (let i = 0; i < 20; i++) {
+        const angle = (Math.PI * 2 * i) / 20 + (Math.random() - 0.5) * 0.4;
+        const speed = 3 + Math.random() * 6;
+        state.particles.push({
+          x: cx + (Math.random() - 0.5) * 80,
+          y: cy + (Math.random() - 0.5) * 30,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 2,
+          size: 4 + Math.random() * 5,
+          color: sparkColors[i % sparkColors.length],
+          life: 32 + Math.random() * 18
+        });
+      }
+    }
+
+    function renderCategoryOptions() {
+      optionsContainer.innerHTML = '';
+      let list = [];
+      let currentVal = '';
+
+      if (state.activeTab === 'body') {
+        list = CAR_BODIES;
+        currentVal = state.car.body;
+      } else if (state.activeTab === 'color') {
+        list = CAR_COLORS;
+        currentVal = state.car.color;
+      } else if (state.activeTab === 'wheel') {
+        list = CAR_WHEELS;
+        currentVal = state.car.wheel;
+      } else if (state.activeTab === 'topper') {
+        list = CAR_TOPPERS;
+        currentVal = state.car.topper;
+      } else if (state.activeTab === 'sticker') {
+        list = CAR_STICKERS;
+        currentVal = state.car.sticker;
+      }
+
+      list.forEach(item => {
+        const btn = document.createElement('button');
+        const isSelected = item.id === currentVal;
+        btn.className = `toy-card rounded-2xl p-2 sm:p-2.5 flex flex-col items-center justify-center gap-1.5 ${isSelected ? 'toy-card-active' : ''}`;
+
+        if (state.activeTab === 'color') {
+          btn.innerHTML = `
+            <div class="w-11 h-11 rounded-full border-2 border-white shadow-md flex items-center justify-center" style="background: linear-gradient(135deg, ${item.top} 0%, ${item.bottom} 100%);">
+              <div class="w-4 h-2 rounded-full bg-white/60 -mt-4"></div>
+            </div>
+            <span class="card-label text-xs sm:text-sm font-black text-slate-100">${item.name}</span>
+          `;
+        } else if (state.activeTab === 'sticker') {
+          btn.innerHTML = `
+            <div class="w-12 h-9 rounded-xl bg-slate-900/80 border border-slate-500 flex items-center justify-center text-lg font-black text-amber-300 shadow-inner">
+              ${item.badge}
+            </div>
+            <span class="card-label text-xs sm:text-sm font-black text-slate-100">${item.name}</span>
+          `;
+        } else {
+          btn.innerHTML = `
+            <div class="flex items-center justify-center h-10">${item.svg}</div>
+            <span class="card-label text-xs sm:text-sm font-black text-slate-100">${item.name}</span>
+          `;
+        }
+
+        btn.addEventListener('click', () => {
+          state.car[state.activeTab] = item.id;
+          saveState();
+          triggerSuspensionBounce(-8);
+          triggerRobotArmInstall();
+          playSound('drill');
+          if (state.activeTab === 'sticker' && item.hornLabel) {
+            speakText(`已装配${item.name}，激活${item.hornLabel}！`);
+            setTimeout(() => playSound('horn'), 260);
+          } else {
+            speakText(`改装完成！已装配${item.name}！`);
+          }
+          renderCategoryOptions();
+        });
+
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    // Category Tabs
+    document.querySelectorAll('.cat-tab').forEach(tabBtn => {
+      tabBtn.addEventListener('click', () => {
+        document.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('tab-active'));
+        tabBtn.classList.add('tab-active');
+        state.activeTab = tabBtn.getAttribute('data-tab');
+        playSound('pop');
+        renderCategoryOptions();
+      });
+    });
+
+    // Speed Gear Buttons
+    document.querySelectorAll('.speed-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.speedMultiplier = parseFloat(btn.getAttribute('data-speed'));
+        playSound('pop');
+        speakText(state.speedMultiplier > 1.3 ? '切换高速涡轮挡！' : '切换平稳巡航挡！');
+      });
+    });
+
+    function triggerHorn() {
+      state.hornWaveTimer = 30;
+      triggerSuspensionBounce(-6);
+      playSound('horn');
+      const stickerObj = CAR_STICKERS.find(s => s.id === state.car.sticker) || CAR_STICKERS[0];
+      speakText(`${stickerObj.hornLabel}！嘀嘀——！`);
+    }
+
+    function triggerJump() {
+      if (!state.isJumping) {
+        state.isJumping = true;
+        state.chassisVy = -12.5;
+        state.chassisPitchV = -0.045;
+        playSound('jump');
+      }
+    }
+
+    function triggerBoost() {
+      state.boostTimer = 65;
+      state.chassisPitch = -0.07;
+      playSound('boost');
+      speakText('全功率氮气加速！冲呀！');
+    }
+
+    // Hydraulic Lift Toggle in Garage
+    document.getElementById('btnLiftToggle').addEventListener('click', () => {
+      state.liftTarget = state.liftTarget > 25 ? 14 : 62;
+      playSound('drill');
+      speakText(state.liftTarget > 25 ? '液压升降台升起，检查底盘避震！' : '液压升降台降下！');
+    });
+
+    // Wash Car Foam & Water Spray
+    document.getElementById('btnWashCar').addEventListener('click', () => {
+      state.washTimer = 95;
+      playSound('star');
+      speakText('高压水枪泡泡浴，车身镀膜亮晶晶！');
+      const canvas = document.getElementById('gameCanvas');
+      for (let i = 0; i < 32; i++) {
+        state.bubbles.push({
+          x: canvas.width * 0.28 + Math.random() * (canvas.width * 0.44),
+          y: canvas.height * 0.32 + Math.random() * 120,
+          r: 9 + Math.random() * 18,
+          vy: -0.5 - Math.random() * 1.1,
+          vx: (Math.random() - 0.5) * 1.4,
+          life: 65 + Math.random() * 45
+        });
+      }
+    });
+
+    // Random Car Combo
+    document.getElementById('btnRandomCar').addEventListener('click', () => {
+      const pick = arr => arr[Math.floor(Math.random() * arr.length)].id;
+      state.car.body = pick(CAR_BODIES);
+      state.car.color = pick(CAR_COLORS);
+      state.car.wheel = pick(CAR_WHEELS);
+      state.car.topper = pick(CAR_TOPPERS);
+      state.car.sticker = pick(CAR_STICKERS);
+      saveState();
+      triggerSuspensionBounce(-9);
+      triggerRobotArmInstall();
+      playSound('star');
+      speakText('超级机械师随机改装完成！太酷啦！');
+      renderCategoryOptions();
+    });
+
+    // Scene Switcher
+    document.getElementById('btnSceneSwitch').addEventListener('click', () => {
+      state.sceneIndex = (state.sceneIndex + 1) % SCENES.length;
+      const sc = SCENES[state.sceneIndex];
+      document.getElementById('sceneIcon').textContent = sc.icon;
+      document.getElementById('sceneName').textContent = sc.name;
+      playSound('pop');
+      speakText(`场景切换至：${sc.name}！`);
+    });
+
+    // Mode Toggle (Garage <-> Drive)
+    function setGameMode(newMode) {
+      state.mode = newMode;
+      const garagePanel = document.getElementById('garagePanel');
+      const drivePanel = document.getElementById('drivePanel');
+      const driveControls = document.getElementById('driveControls');
+      const garageFloatingActions = document.getElementById('garageFloatingActions');
+      const modeBtnIcon = document.getElementById('modeBtnIcon');
+      const modeBtnLabel = document.getElementById('modeBtnLabel');
+      const btnModeToggle = document.getElementById('btnModeToggle');
+
+      if (newMode === 'drive') {
+        garagePanel.classList.add('hidden');
+        drivePanel.classList.remove('hidden');
+        driveControls.classList.remove('hidden');
+        garageFloatingActions.classList.add('hidden');
+        modeBtnIcon.textContent = '🔧';
+        modeBtnLabel.textContent = '回改装车间';
+        btnModeToggle.className = 'toy-btn bg-gradient-to-b from-amber-400 to-amber-600 text-slate-950 font-black px-4 py-2 rounded-2xl text-sm sm:text-base flex items-center gap-1.5 border-2 border-amber-200';
+        playSound('boost');
+        speakText('引擎启动！冲上特技斜坡摘星星吧！');
+        spawnInitialCollectibles();
+      } else {
+        garagePanel.classList.remove('hidden');
+        drivePanel.classList.add('hidden');
+        driveControls.classList.add('hidden');
+        garageFloatingActions.classList.remove('hidden');
+        modeBtnIcon.textContent = '🏁';
+        modeBtnLabel.textContent = '出发兜风！';
+        btnModeToggle.className = 'toy-btn bg-gradient-to-b from-emerald-400 to-emerald-600 text-white font-black px-4 py-2 rounded-2xl text-sm sm:text-base flex items-center gap-1.5 border-2 border-emerald-200';
+        state.chassisPitch = 0;
+        state.chassisY = 0;
+        state.isJumping = false;
+        playSound('drill');
+        speakText('回到改装车库，继续升级你的专属座驾！');
+      }
+    }
+
+    document.getElementById('btnModeToggle').addEventListener('click', () => {
+      setGameMode(state.mode === 'garage' ? 'drive' : 'garage');
+    });
+    document.getElementById('btnDriveBackGarage').addEventListener('click', () => {
+      setGameMode('garage');
+    });
+    document.getElementById('btnGarageHorn').addEventListener('click', triggerHorn);
+    document.getElementById('btnDriveHorn').addEventListener('click', triggerHorn);
+    document.getElementById('btnDriveJump').addEventListener('click', triggerJump);
+    document.getElementById('btnDriveBoost').addEventListener('click', triggerBoost);
+
+    document.getElementById('btnMute').addEventListener('click', () => {
+      state.muted = !state.muted;
+      document.getElementById('btnMute').textContent = state.muted ? '🔇' : '🔊';
+      if (!state.muted) {
+        playSound('pop');
+        speakText('音响系统已开启！');
+      }
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' || e.code === 'ArrowUp') {
+        e.preventDefault();
+        if (state.mode === 'drive') triggerJump();
+        else triggerHorn();
+      } else if (e.code === 'ArrowRight') {
+        if (state.mode === 'drive') triggerBoost();
+      }
+    });
+
+    // =====================================================
+    // 5. HIGH-DETAIL VECTOR GRAPHICS & PHYSICS RENDERER
+    // =====================================================
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+    }
+
+    function spawnInitialCollectibles() {
+      state.collectibles = [];
+      for (let i = 0; i < 5; i++) {
+        state.collectibles.push({
+          x: canvas.width * 0.6 + i * 210,
+          y: i % 2 === 0 ? canvas.height - 140 : canvas.height - 215,
+          type: i % 3 === 0 ? 'nitro' : 'star',
+          bobPhase: i * 1.1
+        });
+      }
+    }
+
+    canvas.addEventListener('pointerdown', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+
+      for (let i = state.bubbles.length - 1; i >= 0; i--) {
+        const b = state.bubbles[i];
+        if (Math.hypot(clickX - b.x, clickY - b.y) <= b.r + 14) {
+          state.bubbles.splice(i, 1);
+          playSound('pop');
+          return;
+        }
+      }
+
+      if (state.mode === 'drive') {
+        triggerJump();
+      } else {
+        triggerHorn();
+      }
+    });
+
+    function drawRoundedRect(x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    // Draw High-Tech Workshop or Outdoor Track
+    function drawEnvironment(w, h) {
+      const scene = SCENES[state.sceneIndex];
+
+      // Sky Gradient
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, h - 70);
+      skyGrad.addColorStop(0, scene.skyTop);
+      skyGrad.addColorStop(1, scene.skyBottom);
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, w, h);
+
+      // Sun / Moon & Stars
+      ctx.save();
+      if (scene.id === 'night') {
+        ctx.fillStyle = '#FEF08A';
+        ctx.shadowColor = '#FEF08A';
+        ctx.shadowBlur = 20;
+        ctx.beginPath();
+        ctx.arc(w - 90, 58, 25, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = '#E2E8F0';
+        for (let i = 0; i < 18; i++) {
+          const sx = (i * 73 + 30) % w;
+          const sy = (i * 31 + 18) % 135;
+          ctx.beginPath();
+          ctx.arc(sx, sy, (i % 2) + 1.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      } else {
+        ctx.fillStyle = '#FDE047';
+        ctx.shadowColor = '#F59E0B';
+        ctx.shadowBlur = 25;
+        ctx.beginPath();
+        ctx.arc(w - 90, 58, 28, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // Parallax Clouds
+      ctx.fillStyle = scene.id === 'night' ? 'rgba(148,163,184,0.18)' : 'rgba(255,255,255,0.82)';
+      state.clouds.forEach(c => {
+        ctx.save();
+        ctx.translate(c.x, c.y);
+        ctx.scale(c.scale, c.scale);
+        ctx.beginPath();
+        ctx.arc(0, 0, 20, 0, Math.PI * 2);
+        ctx.arc(22, -6, 25, 0, Math.PI * 2);
+        ctx.arc(46, 0, 18, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+
+      // Far Mountains / Hills
+      ctx.fillStyle = scene.hillFar;
+      ctx.beginPath();
+      ctx.moveTo(0, h - 72);
+      for (let x = 0; x <= w + 40; x += 40) {
+        const y = h - 98 + Math.sin((x + state.roadOffset * 0.18) * 0.009) * 24;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(w, h);
+      ctx.lineTo(0, h);
+      ctx.closePath();
+      ctx.fill();
+
+      // Near Hills
+      ctx.fillStyle = scene.hillNear;
+      ctx.beginPath();
+      ctx.moveTo(0, h - 72);
+      for (let x = 0; x <= w + 30; x += 30) {
+        const y = h - 80 + Math.cos((x + state.roadOffset * 0.35) * 0.015) * 12;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(w, h);
+      ctx.lineTo(0, h);
+      ctx.closePath();
+      ctx.fill();
+
+      // Asphalt Track / Workshop Floor
+      const roadGrad = ctx.createLinearGradient(0, h - 74, 0, h);
+      roadGrad.addColorStop(0, scene.roadTop);
+      roadGrad.addColorStop(1, scene.roadBottom);
+      ctx.fillStyle = roadGrad;
+      ctx.fillRect(0, h - 74, w, 74);
+
+      // Red & White Racing Curb
+      const curbW = 36;
+      const curbOffset = Math.floor(state.roadOffset * 0.8) % (curbW * 2);
+      for (let x = -curbW * 2; x < w + curbW * 2; x += curbW) {
+        const isRed = Math.floor((x + curbOffset) / curbW) % 2 === 0;
+        ctx.fillStyle = isRed ? '#EF4444' : '#F8FAFC';
+        ctx.fillRect(x - (state.roadOffset * 0.8 % curbW), h - 74, curbW, 7);
+      }
+
+      // Dashed Center Track Line
+      ctx.fillStyle = '#FACC15';
+      const dashStep = 95;
+      const dashOff = state.roadOffset % dashStep;
+      for (let x = -dashStep; x < w + dashStep; x += dashStep) {
+        ctx.fillRect(x - dashOff, h - 38, 48, 6);
+      }
+
+      // GARAGE MODE: Draw Workshop Bay, Tool Cabinets & Hydraulic Scissor Lift
+      if (state.mode === 'garage') {
+        const cx = w * 0.5;
+        const floorY = h - 28;
+
+        // Back Workshop Frame & Tool Wall
+        ctx.save();
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.72)';
+        drawRoundedRect(cx - 230, 56, 460, floorY - 82, 18);
+        ctx.fill();
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Red Tool Chest on Left
+        ctx.fillStyle = '#DC2626';
+        drawRoundedRect(cx - 210, floorY - 125, 68, 95, 6);
+        ctx.fill();
+        ctx.fillStyle = '#991B1B';
+        for (let d = 0; d < 4; d++) {
+          ctx.fillRect(cx - 204, floorY - 116 + d * 21, 56, 15);
+          ctx.fillStyle = '#CBD5E1';
+          ctx.fillRect(cx - 190, floorY - 111 + d * 21, 28, 3);
+          ctx.fillStyle = '#991B1B';
+        }
+
+        // Tire Rack on Right
+        ctx.strokeStyle = '#64748B';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(cx + 145, floorY - 130, 64, 98);
+        ctx.fillStyle = '#1E293B';
+        for (let t = 0; t < 3; t++) {
+          ctx.fillRect(cx + 152 + t * 18, floorY - 122, 12, 38);
+          ctx.fillRect(cx + 152 + t * 18, floorY - 72, 12, 36);
+        }
+
+        // Hydraulic Scissor Lift under the Car
+        const liftH = state.liftHeight;
+        // Base plate
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(cx - 135, floorY - 8, 270, 8);
+        // Scissor X struts
+        ctx.strokeStyle = '#F59E0B';
+        ctx.lineWidth = 7;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(cx - 85, floorY - 6);
+        ctx.lineTo(cx + 85, floorY - 8 - liftH);
+        ctx.moveTo(cx + 85, floorY - 6);
+        ctx.lineTo(cx - 85, floorY - 8 - liftH);
+        ctx.stroke();
+
+        // Top Platform of Lift
+        ctx.fillStyle = '#EAB308';
+        drawRoundedRect(cx - 145, floorY - 18 - liftH, 290, 12, 4);
+        ctx.fill();
+        ctx.fillStyle = '#EF4444';
+        ctx.fillRect(cx - 145, floorY - 18 - liftH, 22, 12);
+        ctx.fillRect(cx + 123, floorY - 18 - liftH, 22, 12);
+
+        // Overhead Robotic Arm when installing parts
+        if (state.robotArmProgress > 0) {
+          const armDrop = Math.sin(state.robotArmProgress * Math.PI) * 95;
+          ctx.strokeStyle = '#FACC15';
+          ctx.lineWidth = 10;
+          ctx.beginPath();
+          ctx.moveTo(cx, 0);
+          ctx.lineTo(cx - 18, 35 + armDrop * 0.5);
+          ctx.lineTo(cx, 65 + armDrop);
+          ctx.stroke();
+
+          // Claw
+          ctx.strokeStyle = '#38BDF8';
+          ctx.lineWidth = 5;
+          ctx.beginPath();
+          ctx.arc(cx, 74 + armDrop, 16, Math.PI * 0.15, Math.PI * 0.85, true);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      // DRIVE MODE: Draw Stunt Ramps & Collectibles
+      if (state.mode === 'drive') {
+        const floorY = h - 32;
+        state.ramps.forEach(ramp => {
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(ramp.x, floorY);
+          ctx.lineTo(ramp.x + ramp.width, floorY - ramp.height);
+          ctx.lineTo(ramp.x + ramp.width, floorY);
+          ctx.closePath();
+          const rGrad = ctx.createLinearGradient(ramp.x, floorY, ramp.x + ramp.width, floorY - ramp.height);
+          rGrad.addColorStop(0, '#F59E0B');
+          rGrad.addColorStop(1, '#EF4444');
+          ctx.fillStyle = rGrad;
+          ctx.fill();
+          ctx.strokeStyle = '#FEF08A';
+          ctx.lineWidth = 3;
+          ctx.stroke();
+
+          // Chevron boost arrows on ramp
+          ctx.fillStyle = '#FFFFFF';
+          ctx.font = 'bold 16px sans-serif';
+          ctx.fillText('>>>', ramp.x + ramp.width * 0.45, floorY - ramp.height * 0.35);
+          ctx.restore();
+        });
+
+        // Draw Collectibles (Golden 3D Stars & Nitro Bottles)
+        state.collectibles.forEach(item => {
+          const bob = Math.sin(item.bobPhase) * 7;
+          const ix = item.x;
+          const iy = item.y + bob;
+          ctx.save();
+          ctx.translate(ix, iy);
+          if (item.type === 'nitro') {
+            // Nitro Energy Cell
+            ctx.fillStyle = '#38BDF8';
+            ctx.shadowColor = '#38BDF8';
+            ctx.shadowBlur = 12;
+            drawRoundedRect(-11, -16, 22, 32, 6);
+            ctx.fill();
+            ctx.fillStyle = '#FEF08A';
+            ctx.font = 'bold 16px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('⚡', 0, 1);
+          } else {
+            // Glowing 5-point Star
+            ctx.fillStyle = '#FACC15';
+            ctx.strokeStyle = '#FEF08A';
+            ctx.lineWidth = 2;
+            ctx.shadowColor = '#F59E0B';
+            ctx.shadowBlur = 12;
+            ctx.beginPath();
+            for (let i = 0; i < 5; i++) {
+              const a1 = (i * 2 * Math.PI) / 5 - Math.PI / 2;
+              const a2 = a1 + Math.PI / 5;
+              ctx.lineTo(Math.cos(a1) * 18, Math.sin(a1) * 18);
+              ctx.lineTo(Math.cos(a2) * 8, Math.sin(a2) * 8);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+          }
+          ctx.restore();
+        });
+      }
+    }
+
+    // Draw Detailed Vector Wheel + Brake Disc + Caliper
+    function drawDetailedWheel(cx, cy, baseRadius, wheelType, angle) {
+      const wheelObj = CAR_WHEELS.find(w => w.id === wheelType) || CAR_WHEELS[0];
+      const r = baseRadius * wheelObj.scale;
+
+      ctx.save();
+      ctx.translate(cx, cy);
+
+      // Brake Caliper (stationary behind spokes)
+      ctx.fillStyle = '#EF4444';
+      drawRoundedRect(-r * 0.55, -r * 0.35, r * 0.35, r * 0.45, 3);
+      ctx.fill();
+
+      ctx.rotate(angle);
+
+      if (wheelType === 'donut') {
+        // Tire base: Golden Dough
+        ctx.fillStyle = '#D97706';
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#92400E';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Strawberry Frosting
+        ctx.fillStyle = '#EC4899';
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 0.76, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Sprinkles
+        const spCols = ['#FEF08A', '#38BDF8', '#4ADE80', '#FFFFFF'];
+        for (let i = 0; i < 8; i++) {
+          const a = (i * Math.PI) / 4;
+          ctx.fillStyle = spCols[i % spCols.length];
+          ctx.save();
+          ctx.rotate(a);
+          drawRoundedRect(r * 0.42, -2, 6, 3.5, 1.5);
+          ctx.fill();
+          ctx.restore();
+        }
+      } else if (wheelType === 'rainbow') {
+        // Cyber Neon Tire
+        ctx.fillStyle = '#0F172A';
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, Math.PI * 2);
+        ctx.fill();
+
+        const neonRings = ['#38BDF8', '#EC4899', '#FACC15', '#4ADE80'];
+        neonRings.forEach((col, idx) => {
+          ctx.strokeStyle = col;
+          ctx.lineWidth = 3.2;
+          ctx.beginPath();
+          ctx.arc(0, 0, r * (0.86 - idx * 0.16), 0, Math.PI * 2);
+          ctx.stroke();
+        });
+      } else {
+        // Rubber Tire with tread
+        ctx.fillStyle = '#0F172A';
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Deep Offroad Lugs for Monster or Flower (Mecha Gear)
+        if (wheelType === 'monster' || wheelType === 'flower') {
+          const lugCount = wheelType === 'monster' ? 12 : 10;
+          ctx.fillStyle = wheelType === 'flower' ? '#F59E0B' : '#1E293B';
+          for (let i = 0; i < lugCount; i++) {
+            const a = (i * Math.PI * 2) / lugCount;
+            ctx.save();
+            ctx.rotate(a);
+            ctx.fillRect(r - 4, -4, 7, 8);
+            ctx.restore();
+          }
+        }
+
+        // Tire Sidewall Ring
+        ctx.strokeStyle = wheelType === 'star' ? '#F8FAFC' : '#334155';
+        ctx.lineWidth = wheelType === 'star' ? 3.5 : 2;
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 0.78, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Metallic Rim Cavity
+        ctx.fillStyle = '#1E293B';
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 0.66, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Steel Brake Rotor
+        ctx.strokeStyle = '#94A3B8';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 0.42, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Spokes by type
+        if (wheelType === 'star') {
+          ctx.fillStyle = '#FACC15';
+          ctx.beginPath();
+          for (let i = 0; i < 5; i++) {
+            const a1 = (i * 2 * Math.PI) / 5 - Math.PI / 2;
+            const a2 = a1 + Math.PI / 5;
+            ctx.lineTo(Math.cos(a1) * (r * 0.64), Math.sin(a1) * (r * 0.64));
+            ctx.lineTo(Math.cos(a2) * (r * 0.26), Math.sin(a2) * (r * 0.26));
+          }
+          ctx.closePath();
+          ctx.fill();
+        } else if (wheelType === 'monster') {
+          // Beadlock Gold Offroad Rim
+          ctx.strokeStyle = '#F59E0B';
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.arc(0, 0, r * 0.58, 0, Math.PI * 2);
+          ctx.stroke();
+          for (let i = 0; i < 6; i++) {
+            const a = (i * Math.PI) / 3;
+            ctx.strokeStyle = '#CBD5E1';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(Math.cos(a) * r * 0.55, Math.sin(a) * r * 0.55);
+            ctx.stroke();
+          }
+        } else {
+          // 5 Twin-Spoke GT Alloy Rim
+          ctx.strokeStyle = '#E2E8F0';
+          ctx.lineWidth = 2.8;
+          for (let i = 0; i < 5; i++) {
+            const a = (i * Math.PI * 2) / 5;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(Math.cos(a - 0.12) * r * 0.64, Math.sin(a - 0.12) * r * 0.64);
+            ctx.moveTo(0, 0);
+            ctx.lineTo(Math.cos(a + 0.12) * r * 0.64, Math.sin(a + 0.12) * r * 0.64);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Center Hub Nut
+      ctx.fillStyle = '#EF4444';
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 0.17, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    // Draw Coiled Suspension Strut connecting Chassis to Wheel Hub
+    function drawSuspensionStrut(x, topY, bottomY) {
+      ctx.save();
+      // Hydraulic piston rod
+      ctx.strokeStyle = '#CBD5E1';
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(x, topY);
+      ctx.lineTo(x, bottomY);
+      ctx.stroke();
+
+      // Red Coilover Spring
+      ctx.strokeStyle = '#EF4444';
+      ctx.lineWidth = 3.5;
+      const coils = 4;
+      const step = (bottomY - topY) / coils;
+      ctx.beginPath();
+      for (let i = 0; i < coils; i++) {
+        const y1 = topY + i * step;
+        const y2 = y1 + step * 0.5;
+        ctx.moveTo(x - 7, y1);
+        ctx.lineTo(x + 7, y2);
+        ctx.lineTo(x - 7, y1 + step);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // Draw Vector Car Body, Livery Decals, Driver & Topper
+    function drawCompleteCar(centerX, baseGroundY) {
+      const colorObj = CAR_COLORS.find(c => c.id === state.car.color) || CAR_COLORS[0];
+      const stickerObj = CAR_STICKERS.find(s => s.id === state.car.sticker) || CAR_STICKERS[0];
+      const bodyType = state.car.body;
+      const liftOffset = state.mode === 'garage' ? -state.liftHeight - 14 : 0;
+
+      const carY = baseGroundY - 58 + liftOffset + state.chassisY;
+
+      ctx.save();
+      ctx.translate(centerX, carY);
+      ctx.rotate(state.chassisPitch);
+
+      // Ground Shadow
+      ctx.save();
+      ctx.rotate(-state.chassisPitch);
+      const shadowDist = -state.chassisY;
+      ctx.fillStyle = 'rgba(2, 6, 23, 0.42)';
+      ctx.beginPath();
+      ctx.ellipse(0, 32 - state.chassisY, Math.max(55, 118 - shadowDist * 0.35), 11, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Night Mode Headlight Cone
+      if (SCENES[state.sceneIndex].id === 'night' || state.boostTimer > 0) {
+        ctx.save();
+        const beamGrad = ctx.createLinearGradient(110, -28, 310, 10);
+        beamGrad.addColorStop(0, 'rgba(254, 240, 138, 0.55)');
+        beamGrad.addColorStop(1, 'rgba(254, 240, 138, 0)');
+        ctx.fillStyle = beamGrad;
+        ctx.beginPath();
+        ctx.moveTo(108, -34);
+        ctx.lineTo(320, -68);
+        ctx.lineTo(320, 22);
+        ctx.lineTo(108, -18);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // Rear Exhaust Afterburner when Boosting
+      if (state.boostTimer > 0) {
+        const fLen = 65 + Math.random() * 35;
+        ctx.save();
+        const fGrad = ctx.createLinearGradient(-115, -18, -115 - fLen, -18);
+        fGrad.addColorStop(0, '#38BDF8');
+        fGrad.addColorStop(0.4, '#FACC15');
+        fGrad.addColorStop(1, 'rgba(239, 68, 68, 0)');
+        ctx.fillStyle = fGrad;
+        ctx.beginPath();
+        ctx.moveTo(-112, -26);
+        ctx.lineTo(-115 - fLen, -16);
+        ctx.lineTo(-112, -6);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // Draw Suspension Struts behind body
+      const rearWheelX = -72;
+      const frontWheelX = 72;
+      const wheelBaseY = 10 - state.frontWheelCompression * 0.4;
+      drawSuspensionStrut(rearWheelX, -24, wheelBaseY);
+      drawSuspensionStrut(frontWheelX, -24, wheelBaseY);
+
+      // Metallic Body Gradient
+      const bodyGrad = ctx.createLinearGradient(0, -115, 0, 5);
+      bodyGrad.addColorStop(0, colorObj.top);
+      bodyGrad.addColorStop(0.65, colorObj.bottom);
+      bodyGrad.addColorStop(1, '#0F172A');
+
+      // Define Chassis Silhouette Path per Body Type
+      ctx.save();
+      ctx.beginPath();
+      if (bodyType === 'sport') {
+        // Sleek GT Supercar Silhouette
+        ctx.moveTo(-118, -8);
+        ctx.lineTo(-122, -34);
+        ctx.quadraticCurveTo(-105, -48, -76, -52);
+        ctx.lineTo(-42, -92);
+        ctx.quadraticCurveTo(-28, -100, 16, -98);
+        ctx.lineTo(64, -54);
+        ctx.quadraticCurveTo(108, -48, 124, -22);
+        ctx.lineTo(120, -8);
+        ctx.closePath();
+      } else if (bodyType === 'monster') {
+        // Lifted 4x4 Pickup Silhouette
+        ctx.moveTo(-116, -16);
+        ctx.lineTo(-116, -68);
+        ctx.lineTo(-56, -68);
+        ctx.lineTo(-44, -114);
+        ctx.lineTo(36, -114);
+        ctx.lineTo(54, -68);
+        ctx.lineTo(116, -62);
+        ctx.lineTo(116, -16);
+        ctx.closePath();
+      } else if (bodyType === 'firetruck') {
+        // Heavy Rescue Fire Engine
+        ctx.moveTo(-122, -8);
+        ctx.lineTo(-122, -96);
+        ctx.lineTo(28, -96);
+        ctx.lineTo(28, -108);
+        ctx.lineTo(108, -108);
+        ctx.lineTo(118, -56);
+        ctx.lineTo(118, -8);
+        ctx.closePath();
+      } else if (bodyType === 'icecream') {
+        // Rounded Retro Camper Bus
+        drawRoundedRect(-114, -106, 228, 98, 28);
+      } else if (bodyType === 'dino') {
+        // Armored Jurassic Mecha Buggy
+        ctx.moveTo(-118, -12);
+        ctx.lineTo(-104, -64);
+        ctx.lineTo(-46, -102);
+        ctx.lineTo(38, -102);
+        ctx.lineTo(96, -62);
+        ctx.lineTo(124, -36);
+        ctx.lineTo(112, -12);
+        ctx.closePath();
+      } else {
+        // Cyber Space Rover
+        ctx.moveTo(-120, -18);
+        ctx.quadraticCurveTo(-125, -58, -65, -66);
+        ctx.arc(0, -64, 58, Math.PI, 0, false);
+        ctx.quadraticCurveTo(125, -58, 120, -18);
+        ctx.closePath();
+      }
+
+      ctx.fillStyle = bodyGrad;
+      ctx.fill();
+      ctx.lineWidth = 3.5;
+      ctx.strokeStyle = '#F8FAFC';
+      ctx.stroke();
+
+      // Clip inside Car Body for Custom Livery Decals & Gloss Reflections!
+      ctx.clip();
+
+      // Top Specular Gloss Highlight
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.22)';
+      ctx.fillRect(-130, -115, 260, 26);
+
+      // Livery Pattern based on selected Sticker
+      if (stickerObj.pattern === 'stripe') {
+        // Racing Twin Stripes + Number Circle
+        ctx.fillStyle = colorObj.accent;
+        ctx.fillRect(-130, -40, 260, 12);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.arc(0, -34, 20, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#0F172A';
+        ctx.font = '900 18px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('77', 0, -33);
+      } else if (stickerObj.pattern === 'flame') {
+        // Hot Rod Flames from front fender
+        ctx.fillStyle = '#FACC15';
+        ctx.beginPath();
+        ctx.moveTo(125, -15);
+        ctx.lineTo(25, -48);
+        ctx.lineTo(48, -28);
+        ctx.lineTo(-35, -42);
+        ctx.lineTo(10, -18);
+        ctx.lineTo(-55, -14);
+        ctx.closePath();
+        ctx.fill();
+      } else if (stickerObj.pattern === 'bolt') {
+        // Lightning Bolt Livery
+        ctx.fillStyle = '#FEF08A';
+        ctx.beginPath();
+        ctx.moveTo(-65, -22);
+        ctx.lineTo(5, -52);
+        ctx.lineTo(-8, -32);
+        ctx.lineTo(68, -56);
+        ctx.lineTo(8, -18);
+        ctx.lineTo(20, -34);
+        ctx.closePath();
+        ctx.fill();
+      } else if (stickerObj.pattern === 'rescue') {
+        // Rescue High-Vis Stripe
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(-130, -38, 260, 14);
+        ctx.fillStyle = '#FACC15';
+        ctx.fillRect(-130, -24, 260, 6);
+      } else if (stickerObj.pattern === 'cyber') {
+        // Neon Cyber Grid Stripe
+        ctx.strokeStyle = '#38BDF8';
+        ctx.lineWidth = 3;
+        for (let i = -3; i <= 3; i++) {
+          ctx.strokeRect(i * 34 - 12, -46, 24, 20);
+        }
+      } else {
+        // Cute Paw / Polka Dots
+        ctx.fillStyle = 'rgba(255,255,255,0.45)';
+        [-65, -20, 25, 70].forEach((dx, idx) => {
+          ctx.beginPath();
+          ctx.arc(dx, idx % 2 === 0 ? -42 : -26, 9, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+
+      // Dark Wheel Arch Cutouts
+      const archY = bodyType === 'monster' ? -14 : -6;
+      ctx.fillStyle = '#090D16';
+      ctx.beginPath();
+      ctx.arc(rearWheelX, archY, 35, Math.PI, 0, false);
+      ctx.arc(frontWheelX, archY, 35, Math.PI, 0, false);
+      ctx.fill();
+
+      ctx.restore(); // End Body Clip
+
+      // Body-Specific Mechanical Details (Rollbars, Ladders, Dino Spikes, Cockpit Window, Driver)
+      const cockpitGrad = ctx.createLinearGradient(0, -102, 0, -54);
+      cockpitGrad.addColorStop(0, '#E0F2FE');
+      cockpitGrad.addColorStop(1, '#38BDF8');
+      ctx.fillStyle = cockpitGrad;
+      ctx.strokeStyle = '#0F172A';
+      ctx.lineWidth = 3;
+
+      if (bodyType === 'sport') {
+        ctx.beginPath();
+        ctx.moveTo(-36, -54);
+        ctx.lineTo(-22, -90);
+        ctx.lineTo(14, -90);
+        ctx.lineTo(54, -54);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      } else if (bodyType === 'monster') {
+        drawRoundedRect(-36, -106, 66, 38, 8);
+        ctx.fill();
+        ctx.stroke();
+        // Heavy Steel Bullbar on front
+        ctx.strokeStyle = '#E2E8F0';
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(106, -18);
+        ctx.lineTo(124, -56);
+        ctx.lineTo(108, -56);
+        ctx.stroke();
+      } else if (bodyType === 'firetruck') {
+        drawRoundedRect(42, -100, 66, 40, 6);
+        ctx.fill();
+        ctx.stroke();
+        // Chrome Equipment Rollup Shutters
+        ctx.fillStyle = '#CBD5E1';
+        drawRoundedRect(-106, -84, 62, 42, 4);
+        ctx.fill();
+        ctx.fillStyle = '#94A3B8';
+        drawRoundedRect(-34, -84, 58, 42, 4);
+        ctx.fill();
+        // Fire Ladder on Roof
+        ctx.strokeStyle = '#FDE047';
+        ctx.lineWidth = 3.5;
+        ctx.strokeRect(-114, -112, 128, 12);
+        for (let lx = -104; lx < 10; lx += 16) {
+          ctx.beginPath();
+          ctx.moveTo(lx, -112);
+          ctx.lineTo(lx, -100);
+          ctx.stroke();
+        }
+      } else if (bodyType === 'icecream') {
+        drawRoundedRect(-24, -94, 118, 38, 10);
+        ctx.fill();
+        ctx.stroke();
+        // Striped Awning over serving window
+        const awCols = ['#EF4444', '#FFFFFF', '#EF4444', '#FFFFFF', '#EF4444', '#FFFFFF'];
+        awCols.forEach((ac, i) => {
+          ctx.fillStyle = ac;
+          ctx.fillRect(-24 + i * 19.5, -96, 19.5, 9);
+        });
+      } else if (bodyType === 'dino') {
+        drawRoundedRect(-36, -94, 72, 36, 10);
+        ctx.fill();
+        ctx.stroke();
+        // Mechanical Dorsal Plates on Roof/Back
+        ctx.fillStyle = '#FACC15';
+        ctx.strokeStyle = '#CA8A04';
+        ctx.lineWidth = 2;
+        for (let s = 0; s < 5; s++) {
+          const sx = -96 + s * 28;
+          const sy = s === 0 ? -68 : -102;
+          ctx.beginPath();
+          ctx.moveTo(sx, sy);
+          ctx.lineTo(sx + 12, sy - 18);
+          ctx.lineTo(sx + 24, sy);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+        }
+      } else {
+        // UFO Glass Dome
+        ctx.beginPath();
+        ctx.arc(0, -62, 52, Math.PI, 0, false);
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      // Cute Vector Racer Helmet Driver inside Cockpit
+      const driverX = bodyType === 'firetruck' ? 68 : 4;
+      const driverY = bodyType === 'monster' ? -82 : -70;
+      ctx.save();
+      ctx.translate(driverX, driverY);
+      // Helmet
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.arc(0, 0, 14, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#EF4444';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      // Visor
+      ctx.fillStyle = '#0F172A';
+      drawRoundedRect(0, -6, 13, 9, 4);
+      ctx.fill();
+      ctx.restore();
+
+      // Glowing LED Headlights & Grille on Front
+      ctx.fillStyle = '#FEF08A';
+      ctx.shadowColor = '#FACC15';
+      ctx.shadowBlur = 10;
+      drawRoundedRect(106, -40, 14, 12, 4);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Rear Taillight
+      ctx.fillStyle = '#EF4444';
+      drawRoundedRect(-120, -42, 10, 14, 3);
+      ctx.fill();
+
+      // Draw Topper / Performance Kit on Roof or Rear
+      const roofY = bodyType === 'monster' ? -116 : bodyType === 'firetruck' ? -112 : bodyType === 'icecream' ? -108 : -102;
+      ctx.save();
+      if (state.car.topper === 'rocket') {
+        // Twin Chrome Nitro Rocket Thrusters
+        ctx.translate(-12, roofY - 14);
+        ctx.fillStyle = '#E2E8F0';
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 2.5;
+        drawRoundedRect(-28, -10, 52, 20, 8);
+        ctx.fill();
+        ctx.stroke();
+        // Red Nose Cone & Rear Nozzle
+        ctx.fillStyle = '#EF4444';
+        ctx.beginPath();
+        ctx.moveTo(24, -10);
+        ctx.lineTo(38, 0);
+        ctx.lineTo(24, 10);
+        ctx.closePath();
+        ctx.fill();
+        // Thruster Flame
+        const jetLen = state.boostTimer > 0 ? 48 + Math.random() * 20 : 18 + Math.random() * 8;
+        ctx.fillStyle = '#38BDF8';
+        ctx.beginPath();
+        ctx.moveTo(-28, -7);
+        ctx.lineTo(-28 - jetLen, 0);
+        ctx.lineTo(-28, 7);
+        ctx.closePath();
+        ctx.fill();
+      } else if (state.car.topper === 'siren') {
+        // Flashing Police/Rescue LED Lightbar
+        ctx.translate(0, roofY - 8);
+        ctx.fillStyle = '#94A3B8';
+        ctx.fillRect(-24, 0, 48, 6);
+        const flash = Math.floor(Date.now() / 150) % 2 === 0;
+        ctx.fillStyle = flash ? '#EF4444' : '#3B82F6';
+        ctx.shadowColor = ctx.fillStyle;
+        ctx.shadowBlur = 14;
+        drawRoundedRect(-20, -10, 18, 10, 3);
+        ctx.fill();
+        ctx.fillStyle = flash ? '#3B82F6' : '#EF4444';
+        ctx.shadowColor = ctx.fillStyle;
+        drawRoundedRect(2, -10, 18, 10, 3);
+        ctx.fill();
+      } else if (state.car.topper === 'propeller') {
+        // Spinning Carbon Helicopter Rotor
+        ctx.translate(0, roofY - 18);
+        ctx.fillStyle = '#64748B';
+        ctx.fillRect(-4, 0, 8, 18);
+        const bladeW = Math.cos(state.propellerAngle) * 68;
+        ctx.fillStyle = '#F59E0B';
+        drawRoundedRect(-Math.abs(bladeW), -4, Math.abs(bladeW) * 2, 8, 4);
+        ctx.fill();
+        ctx.fillStyle = '#EF4444';
+        ctx.beginPath();
+        ctx.arc(0, 0, 6, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (state.car.topper === 'crown') {
+        // Golden 3D Champion Crown
+        ctx.translate(0, roofY - 4);
+        ctx.fillStyle = '#FACC15';
+        ctx.strokeStyle = '#FEF08A';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(-22, 4);
+        ctx.lineTo(-18, -18);
+        ctx.lineTo(-7, -7);
+        ctx.lineTo(0, -22);
+        ctx.lineTo(7, -7);
+        ctx.lineTo(18, -18);
+        ctx.lineTo(22, 4);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      } else if (state.car.topper === 'cone') {
+        // Plasma Energy Cannon
+        ctx.translate(0, roofY - 12);
+        ctx.fillStyle = '#6366F1';
+        ctx.strokeStyle = '#E0E7FF';
+        ctx.lineWidth = 2;
+        drawRoundedRect(-24, -10, 44, 18, 6);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#38BDF8';
+        ctx.shadowColor = '#38BDF8';
+        ctx.shadowBlur = 12;
+        ctx.beginPath();
+        ctx.arc(24, -1, 8, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (state.car.topper === 'wing') {
+        // Carbon GT Rear Spoiler Wing
+        ctx.translate(-92, -62);
+        ctx.fillStyle = '#334155';
+        ctx.beginPath();
+        ctx.moveTo(-8, 8);
+        ctx.lineTo(-22, -26);
+        ctx.lineTo(-12, -26);
+        ctx.lineTo(2, 8);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = '#EF4444';
+        drawRoundedRect(-32, -32, 38, 8, 3);
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // Acoustic Soundwave Rings when Honking
+      if (state.hornWaveTimer > 0) {
+        ctx.save();
+        ctx.strokeStyle = '#38BDF8';
+        ctx.lineWidth = 3.5;
+        for (let i = 1; i <= 3; i++) {
+          ctx.beginPath();
+          ctx.arc(128, -32, 10 + i * 12 + (30 - state.hornWaveTimer) * 0.7, -0.65, 0.65);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      // Draw Front & Rear Detailed Wheels
+      drawDetailedWheel(rearWheelX, wheelBaseY, 28, state.car.wheel, state.wheelAngle);
+      drawDetailedWheel(frontWheelX, wheelBaseY, 28, state.car.wheel, state.wheelAngle);
+
+      ctx.restore();
+    }
+
+    function drawParticlesAndBubbles() {
+      // Sparks & Confetti
+      for (let i = state.particles.length - 1; i >= 0; i--) {
+        const p = state.particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.25;
+        p.life--;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size / 2, 0, Math.PI * 2);
+        ctx.fill();
+        if (p.life <= 0) state.particles.splice(i, 1);
+      }
+
+      // Wash Bubbles
+      for (let i = state.bubbles.length - 1; i >= 0; i--) {
+        const b = state.bubbles[i];
+        b.x += b.vx;
+        b.y += b.vy;
+        b.life--;
+        ctx.save();
+        ctx.fillStyle = 'rgba(186, 230, 253, 0.65)';
+        ctx.strokeStyle = '#7DD3FC';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.arc(b.x - b.r * 0.3, b.y - b.r * 0.3, b.r * 0.22, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        if (b.life <= 0) state.bubbles.splice(i, 1);
+      }
+    }
+
+    function updatePhysics(w, h) {
+      // Clouds
+      state.clouds.forEach(c => {
+        c.x -= c.speed * (state.mode === 'drive' ? 2.6 : 0.6);
+        if (c.x < -80) c.x = w + 80;
+      });
+
+      // Lift smooth interpolation
+      state.liftHeight += (state.liftTarget - state.liftHeight) * 0.12;
+
+      // Robot arm animation decay
+      if (state.robotArmProgress > 0) {
+        state.robotArmProgress = Math.max(0, state.robotArmProgress - 0.035);
+      }
+
+      state.propellerAngle += state.boostTimer > 0 ? 0.55 : 0.28;
+      if (state.hornWaveTimer > 0) state.hornWaveTimer--;
+      if (state.boostTimer > 0) state.boostTimer--;
+      if (state.washTimer > 0) state.washTimer--;
+
+      // Wheel compression spring back
+      state.frontWheelCompression *= 0.82;
+      state.rearWheelCompression *= 0.82;
+
+      if (state.mode === 'drive') {
+        const boostFactor = state.boostTimer > 0 ? 2.2 : 1.0;
+        const speed = 4.8 * state.speedMultiplier * boostFactor;
+        state.roadOffset += speed;
+        state.wheelAngle += speed * 0.048;
+
+        const carX = w * 0.34;
+
+        // Check Ramp Launch!
+        state.ramps.forEach(ramp => {
+          ramp.x -= speed;
+          if (ramp.x < -200) {
+            ramp.x = w + 350 + Math.random() * 400;
+          }
+          // If car is climbing the ramp
+          if (!state.isJumping && carX > ramp.x - 20 && carX < ramp.x + ramp.width) {
+            const ratio = Math.max(0, Math.min(1, (carX - ramp.x) / ramp.width));
+            state.chassisY = -ratio * ramp.height;
+            state.chassisPitch = -0.22;
+            if (ratio > 0.85) {
+              // Launch off the top of the ramp!
+              state.isJumping = true;
+              state.chassisVy = -11.5;
+              state.chassisPitchV = 0.012;
+              playSound('jump');
+            }
+          }
+        });
+
+        // Airborne & Suspension Physics
+        if (state.isJumping) {
+          state.chassisY += state.chassisVy;
+          state.chassisVy += 0.55;
+          state.chassisPitch += state.chassisPitchV;
+          state.chassisPitch *= 0.96;
+
+          if (state.chassisY >= 0) {
+            state.chassisY = 0;
+            state.chassisVy = -3.8; // Suspension rebound
+            state.chassisPitch = 0;
+            state.isJumping = false;
+            state.frontWheelCompression = 10;
+            state.rearWheelCompression = 10;
+          }
+        } else {
+          state.chassisY += state.chassisVy;
+          state.chassisVy += (0 - state.chassisY) * 0.25;
+          state.chassisVy *= 0.76;
+          state.chassisPitch *= 0.85;
+        }
+
+        // Collectibles Collision
+        const carCenterY = h - 90 + state.chassisY;
+        state.collectibles.forEach(item => {
+          item.x -= speed;
+          item.bobPhase += 0.09;
+
+          if (Math.hypot(item.x - carX, item.y - carCenterY) < 76) {
+            state.stars += 1;
+            saveState();
+            updateStarUI();
+            playSound('star');
+            if (item.type === 'nitro') {
+              state.boostTimer = Math.max(state.boostTimer, 40);
+            }
+            for (let i = 0; i < 12; i++) {
+              state.particles.push({
+                x: item.x,
+                y: item.y,
+                vx: (Math.random() - 0.5) * 7,
+                vy: (Math.random() - 0.5) * 7 - 2,
+                size: 5 + Math.random() * 4,
+                color: '#FACC15',
+                life: 28
+              });
+            }
+            item.x = w + 180 + Math.random() * 240;
+            item.y = Math.random() > 0.45 ? h - 140 : h - 215;
+            item.type = Math.random() > 0.3 ? 'star' : 'nitro';
+          }
+
+          if (item.x < -50) {
+            item.x = w + 150 + Math.random() * 220;
+          }
+        });
+      } else {
+        // Garage suspension spring
+        state.chassisY += state.chassisVy;
+        state.chassisVy += (0 - state.chassisY) * 0.26;
+        state.chassisVy *= 0.76;
+        state.wheelAngle += 0.012;
+      }
+    }
+
+    let animFrameId = null;
+    function gameLoop() {
+      const w = canvas.width;
+      const h = canvas.height;
+
+      updatePhysics(w, h);
+      drawEnvironment(w, h);
+
+      const carX = state.mode === 'drive' ? w * 0.34 : w * 0.5;
+      drawCompleteCar(carX, h - 26);
+      drawParticlesAndBubbles();
+
+      animFrameId = requestAnimationFrame(gameLoop);
+    }
+
+    window.onload = () => {
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+      updateStarUI();
+      renderCategoryOptions();
+      spawnInitialCollectibles();
+      if (animFrameId) cancelAnimationFrame(animFrameId);
+      animFrameId = requestAnimationFrame(gameLoop);
+    };
+  </script>
+</body>
+</html>
